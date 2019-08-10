@@ -33,7 +33,7 @@
 <script>
     import * as M from 'materialize-css/dist/js/materialize.js'
 
-    const baseUrl = 'https://api.mercadolibre.com/sites/MLC/search?q=';
+    const baseUrl = 'https://api.mercadolibre.com/sites/MCO/search?q=';
     const responseSuccessMessage = "Operación exitosa";
     const responseFailMessage = "Operación fallida";
 
