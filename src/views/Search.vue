@@ -1,17 +1,25 @@
 <template>
     <div class="product-list-container">
         <div class="space-list-search input-field">
-            <i class="material-icons prefix search-icon">search</i>
-            <input class="input-search" type="text" placeholder="Nombre del producto">
+            <form v-on:keyup.enter="getProductsList" class="center-align">
+                <i class="material-icons prefix search-icon">search</i>
+                <input v-model="searchText" class="input-search" type="text" placeholder="Nombre del producto">
+
+                <div class="progress-container center-align">
+                    <div v-if="progress" class="progress">
+                        <div class="indeterminate"></div>
+                    </div>
+                </div>
+            </form>
         </div>
 
-        <div class="row">
-            <div v-for="product in products" v-bind:key="product.id" class="col s12 l3">
+        <div class="row product-list">
+            <div v-for="product in products" v-bind:key="product.id" class="product-row col s12 l3">
                 <div class="product-container">
                     <div class="product-image">
                         <img v-bind:src="product.thumbnail" class="product-image" alt="product image">
                     </div>
-                    <p class="center-align"><b>{{product.title}}</b></p>
+                    <p class="product-title center-align"><b>{{product.title}}</b></p>
                     <div class="product-footer">
                         <p class="left product-price">$ {{product.price}}</p>
                         <button @click="buyProduct(product)" class="right btn main-button">Comprar</button>
@@ -25,7 +33,7 @@
 <script>
     import * as M from 'materialize-css/dist/js/materialize.js'
 
-    const testUrl = 'https://api.mercadolibre.com/sites/MLA/search?category=MLA5726';
+    const baseUrl = 'https://api.mercadolibre.com/sites/MLC/search?q=';
     const responseSuccessMessage = "Operación exitosa";
     const responseFailMessage = "Operación fallida";
 
@@ -33,6 +41,8 @@
         name: "Search",
         data() {
             return {
+                progress: false,
+                searchText: '',
                 products: [],
                 success: false
             }
@@ -41,13 +51,18 @@
             this.getProductsList();
         },
         methods: {
-            getProductsList: function () {
-                this.$http.get(testUrl)
+            getProductsList: function (event) {
+                event.preventDefault();
+                this.progress = true;
+
+                this.$http.get(baseUrl + this.searchText)
                     .then((response) => {
                         this.showResponseMessage(response.status);
                         this.products = response.data.results;
+                        this.progress = false;
                     }).catch(() => {
                     this.showResponseMessage(400);
+                    this.progress = false;
                 });
             },
             buyProduct: function () {
@@ -80,6 +95,7 @@
         margin-left: 20% !important;
         height: 50px !important;
         margin-top: 15px !important;
+        margin-bottom: 20px !important;
     }
 
     .search-icon {
@@ -92,19 +108,38 @@
         padding-left: 20px !important;
     }
 
+    .progress-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .progress {
+        width: 40% !important;
+    }
+
     .product-list-container {
         width: 90vw;
         margin-left: 5vw;
         margin-top: 100px !important;
     }
 
+    .product-row {
+        height: 350px !important;
+    }
+
+    .product-list {
+        margin-top: 30px !important;
+    }
+
     .product-container {
         border: 1px dashed gray;
         padding: 20px 20px 20px 20px !important;
+        height: 320px !important;
     }
 
     .product-image {
-        max-height: 300px !important;
+        height: 150px !important;
         text-align: center !important;
     }
 
@@ -113,35 +148,21 @@
         width: 150px !important;
     }
 
-    .product-info {
-        margin-top: 10px !important;
-        margin-bottom: 10px !important;
+    .product-title {
+        height: 70px !important;
     }
 
-    .span-feature {
-        display: inline-block;
-        padding: 5px 10px 5px 10px !important;
-        border: 1px dashed blue;
-        border-radius: 30px !important;
+    .product-footer {
+        margin: 0 auto !important;
+        padding: 0 !important;
+        height: 70px !important;
     }
-
-    .product-info-text > b {
-        font-size: 36px !important;
-        font-weight: 100 !important;
-    }
-
 
     .product-price {
         margin-top: -0px !important;
         font-size: 28px !important;
         font-weight: bold;
 
-    }
-
-    .product-footer {
-        margin: 0 auto !important;
-        padding: 0 !important;
-        height: 30px !important;
     }
 
     .main-button {
@@ -156,5 +177,4 @@
         background-color: white !important;
         color: #4caf50 !important;
     }
-
 </style>
