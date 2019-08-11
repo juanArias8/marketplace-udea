@@ -1,7 +1,7 @@
 <template>
     <div class="product-list-container">
         <div class="space-list-search input-field">
-            <form v-on:keyup.enter="getProductsList" class="center-align">
+            <div v-on:keyup.enter="getProductsList" class="center-align">
                 <i class="material-icons prefix search-icon">search</i>
                 <input v-model="searchText" class="input-search" type="text" placeholder="Nombre del producto">
 
@@ -10,7 +10,7 @@
                         <div class="indeterminate"></div>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
 
         <div class="row product-list">
@@ -42,7 +42,7 @@
         data() {
             return {
                 progress: false,
-                searchText: '',
+                searchText: 'motorola',
                 products: [],
                 success: false
             }
@@ -51,8 +51,7 @@
             this.getProductsList();
         },
         methods: {
-            getProductsList: function (event) {
-                event.preventDefault();
+            getProductsList: function () {
                 this.progress = true;
 
                 this.$http.get(baseUrl + this.searchText)
